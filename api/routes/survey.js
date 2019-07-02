@@ -7,7 +7,6 @@ const Survey = require('../models/survey');
 router.get("/", (req, res, next) => {
     Survey.find()
         .then(docs => {
-            console.log(docs);
             res.status(200).json(docs);
         })
         .catch(err => {
@@ -20,7 +19,6 @@ router.get('/:surveyId', (req, res, next) => {
     const id = req.params.surveyId;
     Survey.findById(id)
         .then(doc => {
-            console.log(doc);
             if (doc) {
                 res.status(200).json(doc);
             } else {
@@ -28,7 +26,6 @@ router.get('/:surveyId', (req, res, next) => {
             }
         })
         .catch(err => {
-            console.log(err);
             res.status(500).json({ error: err })
         });
 });
@@ -43,14 +40,12 @@ router.post('/', (req, res, next) => {
     });
     survey.save()
         .then(result => {
-            console.log(result);
             res.status(201).json({
                 message: "This is a POST survey routes",
                 createdSurvey: survey
             });
         })
-        .catch(error => {
-            console.log(error);
+        .catch(err => {
             res.status(500).json({
                 error: err
             });
