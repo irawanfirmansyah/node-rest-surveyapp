@@ -6,7 +6,6 @@ const Survey = require('../models/survey');
 //Handle GET request to get All survey
 router.get("/", (req, res, next) => {
     Survey.find()
-        .exec()
         .then(docs => {
             console.log(docs);
             res.status(200).json(docs);
@@ -20,7 +19,6 @@ router.get("/", (req, res, next) => {
 router.get('/:surveyId', (req, res, next) => {
     const id = req.params.surveyId;
     Survey.findById(id)
-        .exec()
         .then(doc => {
             console.log(doc);
             if (doc) {
@@ -67,7 +65,6 @@ router.patch('/:surveyId', (req, res, next) => {
         updatedProps[prop.propName] = prop.value;
     }
     Survey.update({ _id: id }, { $set: updatedProps })
-        .exec()
         .then(result => {
             res.status(200).json(result);
         })
@@ -86,7 +83,6 @@ router.delete('/:surveyId', (req, res, next) => {
                 res.status(404).json({ error: `No survey entry with such ID` });
             } else {
                 Survey.deleteOne({ _id: id })
-                    .exec()
                     .then(() => {
                         res.status(200).json({ msg: `Survey with ${id} id has been deleted` })
                     });
