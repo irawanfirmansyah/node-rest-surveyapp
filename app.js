@@ -9,7 +9,7 @@ const userRoutes = require('./api/routes/user');
 
 mongoose.connect('mongodb+srv://irawanfirmansyah:' + process.env.MONGO_ATLAS_PW + '@node-survey-ilm30.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
 
-//Used middleware
+//Plugins
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
     next();
 });
 
-//Used Routes
+//Route's resources
 app.use('/survey', surveyRoutes);
 app.use('/user', userRoutes);
 

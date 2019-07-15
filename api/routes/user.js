@@ -1,22 +1,23 @@
-const express = require('express');
+const express = require('express')
 const router = express.Router();
+const mongoose = reuire('mongoose');
 
-router.post('/login', (req, res, next) => {
-    res.status(200).json({
-        msg : 'Login success!!'
+router.post('/login', (request, response, next) => {
+    response.status(200).json({
+        message : 'Login success!!'
     });
 });
 
-router.post('/signup', (req, res, next) => {
-    res.status(201).json({
-        msg: 'Your account have been created!!'
+router.post('/signup', (request, response, next) => {
+    response.status(201).json({
+        message: 'Your account have been created!!'
     });
 });
 
-router.delete('/:userId', (req, res, next) => {
-    res.status(201).json({
-        msg: 'Delete account success',
-        id: req.params.userId
+router.delete('/:userId', (request, response, next) => {
+    response.status(201).json({
+        message: 'Delete account success',
+        id: request.params.userId
     });
 });
 

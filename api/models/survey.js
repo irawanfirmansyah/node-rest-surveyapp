@@ -3,8 +3,8 @@ const userModel = require('./user');
 
 const surveySchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    rating: Number,
-    isSolved: Boolean
+    rating: { type: Number, required: true },
+    isSolved: { type: Boolean, default: false }
     // user: {
     //     type : mongoose.Schema.Types.ObjectId,
     //     ref: 'User'

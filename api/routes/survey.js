@@ -6,8 +6,11 @@ const Survey = require('../models/survey');
 //Handle GET request to get All survey
 router.get("/", (req, res, next) => {
     Survey.find()
+        .select('_id rating isSolved')
         .then(docs => {
-            res.status(200).json(docs);
+            res.status(200).json({
+                count: docs.length, data: docs
+            });
         })
         .catch(err => {
             res.status(500).json({ error: err });
@@ -18,6 +21,7 @@ router.get("/", (req, res, next) => {
 router.get('/:surveyId', (req, res, next) => {
     const id = req.params.surveyId;
     Survey.findById(id)
+        .select('_id rating isSolved')
         .then(doc => {
             if (doc) {
                 res.status(200).json(doc);
@@ -33,16 +37,20 @@ router.get('/:surveyId', (req, res, next) => {
 //Handle POST request to add survey
 router.post('/', (req, res, next) => {
 
-    const survey = new Survey({
+    const newSurvey = new Survey({
         _id: new mongoose.Types.ObjectId(),
         rating: req.body.rating,
         isSolved: false
     });
-    survey.save()
+    newSurvey.save()
         .then(result => {
             res.status(201).json({
-                message: "This is a POST survey routes",
-                createdSurvey: survey
+                message: `Survey with ${result._id} ID has been created`,
+                createdSurvey: {
+                    _id: result.id,
+                    rating: result.rating,
+                    isSolved: result.isSolved
+                }
             });
         })
         .catch(err => {
@@ -59,27 +67,33 @@ router.patch('/:surveyId', (req, res, next) => {
     for (const prop of req.body) {
         updatedProps[prop.propName] = prop.value;
     }
-    Survey.update({ _id: id }, { $set: updatedProps })
+    Survey.findById(id)
         .then(result => {
-            res.status(200).json(result);
-        })
-        .catch(err => {
-            res.status(500).json({ error: err });
+            if (!result) {
+                res.status(404).json({ error: `No survey entry with such id` });
+            } else {
+                Survey.updateOne({ _id: id }, updatedProps)
+                    .then(() => {
+                        res.status(200).json({ message: `Survey with ${id} ID has been udpated` });
+                    })
+                    .catch(err => {
+                        res.status(500).json({ error: err });
+                    });
+            }
         });
 });
 
 //Handle DELETE request to delete survey by ID
 router.delete('/:surveyId', (req, res, next) => {
     const id = req.params.surveyId;
-    Survey.find({ _id: id })
-        .countDocuments()
+    Survey.findById(id)
         .then(result => {
-            if (result === 0) {
+            if (!result) {
                 res.status(404).json({ error: `No survey entry with such ID` });
             } else {
                 Survey.deleteOne({ _id: id })
                     .then(() => {
-                        res.status(200).json({ msg: `Survey with ${id} id has been deleted` })
+                        res.status(200).json({ message: `Survey with ${id} ID has been deleted` });
                     });
             }
         })
