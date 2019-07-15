@@ -10,4 +10,4 @@ package-lock.json
 *.gz
 #
 # nodemon
-# nodemon.json
+nodemon.json
