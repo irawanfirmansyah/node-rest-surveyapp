@@ -3,7 +3,6 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
 const surveyRoutes = require('./api/routes/survey');
 const userRoutes = require('./api/routes/user');
 
@@ -27,12 +26,14 @@ app.use((req, res, next) => {
 app.use('/survey', surveyRoutes);
 app.use('/user', userRoutes);
 
+//Can not handle request
 app.use((req, res, next) => {
     const error = new Error('Not Found');
     error.status = 404;
     next(error);
 });
 
+//Internal server error
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
