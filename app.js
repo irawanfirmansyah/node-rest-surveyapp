@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-app.use(cors());
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -10,6 +9,7 @@ const userRoutes = require('./api/routes/user');
 
 mongoose.connect(process.env.MONGO_DB_URI, { useNewUrlParser: true });
 
+app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
