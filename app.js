@@ -9,8 +9,7 @@ const userRoutes = require('./api/routes/user');
 
 mongoose.connect(process.env.MONGO_DB_URI, { useNewUrlParser: true });
 
-//Plugins
-app.use(morgan('tiny'));
+app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
