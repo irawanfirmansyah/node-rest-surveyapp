@@ -5,12 +5,15 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const surveyRoutes = require('./api/routes/survey');
 const userRoutes = require('./api/routes/user');
+const cors = require('cors');
 
 mongoose.connect(process.env.MONGO_DB_URI, { useNewUrlParser: true });
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+//Enable all CORS requests
+app.use(cors());
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
