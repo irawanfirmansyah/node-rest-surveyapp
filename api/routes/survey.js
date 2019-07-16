@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Survey = require('../models/survey');
+const userAuth = require('../middleware/user-authentication');
 
 //Handle GET request to get All survey
 router.get("/", (req, res, next) => {
@@ -35,7 +36,7 @@ router.get('/:surveyId', (req, res, next) => {
 });
 
 //Handle POST request to add survey
-router.post('/', (req, res, next) => {
+router.post('/', userAuth, (req, res, next) => {
 
     const newSurvey = new Survey({
         _id: new mongoose.Types.ObjectId(),
