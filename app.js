@@ -9,7 +9,6 @@ const userRoutes = require('./api/routes/user');
 
 mongoose.connect(process.env.MONGO_DB_URI, { useNewUrlParser: true });
 
-app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
