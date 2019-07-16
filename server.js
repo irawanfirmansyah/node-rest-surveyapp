@@ -1,12 +1,12 @@
 try {
+    //Use local dev environment if exists
     require('dotenv').config()
 }
 catch{
-    //do nothing
+    //No local dev environment (assume it is deployment), then do nothing
 }
 const http = require('http');
 const app = require('./app');
-app.conf
 const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);
