@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const userModel = require('./user');
 
 const surveySchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
