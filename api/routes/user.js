@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 router.post('/signup', (request, response, next) => {
     User.findOne({
@@ -58,8 +59,19 @@ router.post('/signin', (req, res, next) => {
         .then(async (result) => {
             const match = await bcrypt.compare(req.body.password, result.password);
             if (match) {
+                const token = jwt.sign(
+                    {
+                        email: result.email,
+                        userId: result._id
+                    },
+                    process.env.JWT_KEY,
+                    {
+                        expiresIn: "1h"
+                    }
+                );
                 return res.status(200).json({
-                    message: 'Authentication successful'
+                    message: 'Authentication successful',
+                    token: token
                 });
             } else {
                 return res.status(401).json({
