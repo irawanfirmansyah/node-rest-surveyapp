@@ -7,12 +7,10 @@ const mongoose = require('mongoose');
 const surveyRoutes = require('./api/routes/survey');
 const userRoutes = require('./api/routes/user');
 
-const MONGO_ATLAS_PW = process.env.MONGO_ATLAS_PW || 'Nangulub70';
-
-mongoose.connect('mongodb+srv://irawanfirmansyah:' + MONGO_ATLAS_PW + '@node-survey-ilm30.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
+mongoose.connect(process.env.MONGO_DB_URI, { useNewUrlParser: true });
 
 //Plugins
-app.use(morgan('dev'));
+app.use(morgan('tiny'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
