@@ -7,7 +7,7 @@ const User = require('../models/user');
  */
 exports.survey_get_all = (req, res, next) => {
     Survey.find()
-        .select('_id rating isSolved')
+        .select('_id rating isSolved user')
         .then(docs => {
             return res.status(200).json({
                 count: docs.length, data: docs
@@ -21,12 +21,15 @@ exports.survey_get_all = (req, res, next) => {
 /**
  * Get survey by ID
  */
-exports.survey_get_by_id = (req, res, next) => {
+exports.survey_get_by_id = async (req, res, next) => {
     const id = req.params.surveyId;
+    const surveyFound = await Survey.findById(id).select('_id rating isSolved user');
+    console.log(surveyFound);
     Survey.findById(id)
-        .select('_id rating isSolved')
+        .select('_id rating isSolved user')
         .then(doc => {
             if (doc) {
+                console.log(doc)
                 return res.status(200).json(doc);
             } else {
                 return res.status(404).json({ message: "There is no survey found with such ID" })
