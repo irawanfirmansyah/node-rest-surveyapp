@@ -4,12 +4,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
-router.post('/login', (request, response, next) => {
-    response.status(200).json({
-        message: 'Login success!!'
-    });
-});
-
 router.post('/signup', (request, response, next) => {
     User.findOne({
         $or: [{ username: request.body.username }, { fullName: request.body.fullName }, { email: request.body.email }]
@@ -57,6 +51,26 @@ router.post('/signup', (request, response, next) => {
                 });
             }
         });
+});
+
+router.post('/signin', (req, res, next) => {
+    User.findOne({ $or: [{ username: req.body.emailOrUsername }, { email: req.body.emailOrUsername }] })
+        .then(async (result) => {
+            const match = await bcrypt.compare(req.body.password, result.password);
+            if (match) {
+                return res.status(200).json({
+                    message: 'Authentication successful'
+                });
+            } else {
+                return res.status(401).json({
+                    message: 'Login failed. The password you\'ve entered is incorrect'
+                });
+            }
+        }).catch(() => {
+            return res.status(401).json({
+                message: 'Login failed. The username or email you\'ve entered is doesnt exist'
+            });
+        })
 });
 
 router.delete('/:userId', (request, response, next) => {
