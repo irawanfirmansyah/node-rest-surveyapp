@@ -12,7 +12,6 @@ mongoose.connect(process.env.MONGO_DB_URI, { useNewUrlParser: true });
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-//Enable all CORS requests
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
