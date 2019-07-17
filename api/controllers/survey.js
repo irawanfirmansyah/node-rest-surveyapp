@@ -1,124 +1,98 @@
 const mongoose = require('mongoose');
 const Survey = require('../models/survey');
 const User = require('../models/user');
+const surveyHelper = require('../helpers/survey.helper');
+const userHelper = require('../helpers/user.helper');
+const asyncMiddleware = require('../middleware/async-middleware');
 
 /**
  * Get All survey
  */
-exports.survey_get_all = (req, res, next) => {
-    Survey.find()
-        .select('_id rating isSolved user')
-        .then(docs => {
-            return res.status(200).json({
-                count: docs.length, data: docs
-            });
-        })
-        .catch(err => {
-            return res.status(500).json({ error: err });
-        });
-}
+exports.survey_get_all = asyncMiddleware(async (req, res, next) => {
+	const allSurvey = await surveyHelper.getAllSurvey();
+	res.status(200).json({
+		count: allSurvey.length,
+		data: allSurvey
+	});
+});
+
 
 /**
  * Get survey by ID
  */
-exports.survey_get_by_id = async (req, res, next) => {
-    const id = req.params.surveyId;
-    const surveyFound = await Survey.findById(id).select('_id rating isSolved user');
-    console.log(surveyFound);
-    Survey.findById(id)
-        .select('_id rating isSolved user')
-        .then(doc => {
-            if (doc) {
-                console.log(doc)
-                return res.status(200).json(doc);
-            } else {
-                return res.status(404).json({ message: "There is no survey found with such ID" })
-            }
-        })
-        .catch(err => {
-            return res.status(500).json({ error: err })
-        });
-}
+exports.survey_get_by_id = asyncMiddleware(async (req, res, next) => {
+	const id = req.params.surveyId;
+	const surveyFound = await surveyHelper.getSurveyById(id);
+	if (!surveyFound) {
+		const error = new Error(`No survey entry with such ID`);
+		error.status = 404;
+		throw error;
+	} else {
+		res.status(200).json(surveyFound);
+	}
+
+});
 
 /**
  * Create Survey
  */
-exports.survey_create_one = (req, res, next) => {
-    User.findById(req.body.userId)
-        .then(() => {
-            const newSurvey = new Survey({
-                _id: new mongoose.Types.ObjectId(),
-                rating: req.body.rating,
-                isSolved: false,
-                user: req.body.userId
-            });
-            newSurvey.save()
-                .then(result => {
-                    return res.status(201).json({
-                        message: `Survey with ${result._id} ID has been created`,
-                        createdSurvey: {
-                            _id: result.id,
-                            rating: result.rating,
-                            isSolved: result.isSolved,
-                            user: result.user
-                        }
-                    });
-                })
-                .catch(() => {
-                    return res.status(500).json({
-                        error: `Internal server error`
-                    });
-                });
-        })
-        .catch(() => {
-            return res.status(401).json({
-                message: err
-            });
-        });
-}
+exports.survey_create_one = asyncMiddleware(async (req, res, next) => {
+	const userFound = await userHelper.getUserById(req.body.userId);
+	if (!userFound) {
+		throw new Error('Internal Server Error!');
+	}
+	const newSurvey = new Survey({
+		_id: new mongoose.Types.ObjectId(),
+		rating: req.body.rating,
+		isSolved: false,
+		user: req.body.userId
+	});
+	const result = await surveyHelper.create(newSurvey);
+	res.status(201).json({
+		message: `Survey with ${result._id} ID has been created`,
+		createdSurvey: {
+			_id: result.id,
+			rating: result.rating,
+			isSolved: result.isSolved,
+			user: result.user
+		}
+	});
+});
 
 /**
  * Update survey by ID
  */
-exports.survey_update_one = (req, res, next) => {
-    const id = req.params.surveyId;
-    const updatedProps = {};
-    for (const prop of req.body) {
-        updatedProps[prop.propName] = prop.value;
-    }
-    Survey.findById(id)
-        .then(result => {
-            if (!result) {
-                return res.status(404).json({ error: `No survey entry with such id` });
-            } else {
-                Survey.updateOne({ _id: id }, updatedProps)
-                    .then(() => {
-                        return res.status(200).json({ message: `Survey with ${id} ID has been udpated` });
-                    })
-                    .catch(err => {
-                        return res.status(500).json({ error: err });
-                    });
-            }
-        });
-}
+exports.survey_update_one = asyncMiddleware(async (req, res, next) => {
+	const id = req.params.surveyId;
+	let surveyIsExist = await surveyHelper.getSurveyById(id);
+	console.log(surveyIsExist);
+	if (!surveyIsExist) {
+		const error = new Error(`No survey entry with such ID`)
+		error.status = 404;
+		throw error;
+	}
+	const updatedProps = {};
+	for (const prop of req.body) {
+		updatedProps[prop.propName] = prop.value;
+	}
+	await surveyHelper.update(id, updatedProps);
+	res.status(200).json({
+		message: `Survey with ${id} ID has been updated`
+	});
+
+});
 
 /**
  * Delete survey by ID
  */
-exports.survey_delete_by_id = (req, res, next) => {
-    const id = req.params.surveyId;
-    Survey.findById(id)
-        .then(result => {
-            if (!result) {
-                return res.status(404).json({ error: `No survey entry with such ID` });
-            } else {
-                Survey.deleteOne({ _id: id })
-                    .then(() => {
-                        return res.status(200).json({ message: `Survey with ${id} ID has been deleted` });
-                    });
-            }
-        })
-        .catch(err => {
-            return res.status(500).json({ error: err });
-        });
-}
+exports.survey_delete_by_id = asyncMiddleware(async (req, res, next) => {
+	const id = req.params.surveyId;
+	let surveyIsExist = await Survey.findById(id);
+	if (!surveyIsExist) {
+		const error = new Error(`No survey entry with such ID`)
+		error.status = 404;
+		throw error;
+	}
+	await surveyHelper.delete(id);
+	return res.status(200).json({ message: `Survey with ${id} ID has been deleted` });
+});

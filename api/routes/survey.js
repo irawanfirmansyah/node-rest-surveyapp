@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const userAuth = require('../middleware/user-authentication');
 const SurveyController = require('../controllers/survey');
 
 /**
@@ -14,8 +13,8 @@ const SurveyController = require('../controllers/survey');
 
 router.get("/", SurveyController.survey_get_all);
 router.get('/:surveyId', SurveyController.survey_get_by_id);
-router.post('/', userAuth, SurveyController.survey_create_one);
-router.patch('/:surveyId', userAuth, SurveyController.survey_update_one);
-router.delete('/:surveyId', userAuth, SurveyController.survey_delete_by_id);
+router.post('/', SurveyController.survey_create_one);
+router.patch('/:surveyId', SurveyController.survey_update_one);
+router.delete('/:surveyId', SurveyController.survey_delete_by_id);
 
 module.exports = router;
