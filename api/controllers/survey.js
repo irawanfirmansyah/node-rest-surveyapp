@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Survey = require('../models/survey');
-const User = require('../models/user');
 const surveyHelper = require('../helpers/survey.helper');
 const userHelper = require('../helpers/user.helper');
 const asyncMiddleware = require('../middleware/async-middleware');

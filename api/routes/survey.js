@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const SurveyController = require('../controllers/survey');
-const userAuth = require('../middleware/user-authentication');
+const surveyController = require('../controllers/survey');
+const checkAuthentication = require('../middleware/user-authentication');
 
 /**
  * Survey routes : 
@@ -12,10 +12,10 @@ const userAuth = require('../middleware/user-authentication');
  * - Delete a survey by ID
  */
 
-router.get("/", SurveyController.survey_get_all);
-router.get('/:surveyId', SurveyController.survey_get_by_id);
-router.post('/', userAuth, SurveyController.survey_create_one);
-router.patch('/:surveyId', userAuth, SurveyController.survey_update_one);
-router.delete('/:surveyId', userAuth, SurveyController.survey_delete_by_id);
+router.get("/", surveyController.survey_get_all);
+router.get('/:surveyId', surveyController.survey_get_by_id);
+router.post('/', checkAuthentication, surveyController.survey_create_one);
+router.patch('/:surveyId', checkAuthentication, surveyController.survey_update_one);
+router.delete('/:surveyId', checkAuthentication, surveyController.survey_delete_by_id);
 
 module.exports = router;

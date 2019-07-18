@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router();
-const UserController = require('../controllers/user');
+const userController = require('../controllers/user');
+const checkAuthentication = require('../middleware/user-authentication');
 
 /**
  * User routes : 
@@ -9,8 +10,8 @@ const UserController = require('../controllers/user');
  * - Delete user
  */
 
-router.post('/signup', UserController.user_create);
-router.post('/login', UserController.user_login);
-router.delete('/:userId', UserController.user_delete);
+router.post('/signup', userController.user_create);
+router.post('/login', userController.user_login);
+router.delete('/:userId', checkAuthentication, userController.user_delete);
 
 module.exports = router;

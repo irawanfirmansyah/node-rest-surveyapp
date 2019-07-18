@@ -1,9 +1,9 @@
 try {
-    //Use local dev environment if exists
-    require('dotenv').config()
+    //Import and set local environment
+    require('dotenv').config();
 }
 catch{
-    //No local dev environment (assume it is deployment), then do nothing
+    //do nothing
 }
 const http = require('http');
 const app = require('./app');
