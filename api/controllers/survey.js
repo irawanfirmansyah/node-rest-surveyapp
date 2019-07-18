@@ -5,8 +5,10 @@ const userHelper = require('../helpers/user.helper');
 const asyncMiddleware = require('../middleware/async-middleware');
 
 /**
- * Get All survey
+ * Survey controllers
+ * 
  */
+
 exports.survey_get_all = asyncMiddleware(async (req, res, next) => {
 	const allSurvey = await surveyHelper.getAllSurvey();
 	res.status(200).json({
@@ -15,10 +17,6 @@ exports.survey_get_all = asyncMiddleware(async (req, res, next) => {
 	});
 });
 
-
-/**
- * Get survey by ID
- */
 exports.survey_get_by_id = asyncMiddleware(async (req, res, next) => {
 	const id = req.params.surveyId;
 	const surveyFound = await surveyHelper.getSurveyById(id);
@@ -32,9 +30,6 @@ exports.survey_get_by_id = asyncMiddleware(async (req, res, next) => {
 
 });
 
-/**
- * Create Survey
- */
 exports.survey_create_one = asyncMiddleware(async (req, res, next) => {
 	const userFound = await userHelper.getUserById(req.body.userId);
 	if (!userFound) {
@@ -58,9 +53,6 @@ exports.survey_create_one = asyncMiddleware(async (req, res, next) => {
 	});
 });
 
-/**
- * Update survey by ID
- */
 exports.survey_update_one = asyncMiddleware(async (req, res, next) => {
 	const id = req.params.surveyId;
 	let surveyIsExist = await surveyHelper.getSurveyById(id);
@@ -81,9 +73,6 @@ exports.survey_update_one = asyncMiddleware(async (req, res, next) => {
 
 });
 
-/**
- * Delete survey by ID
- */
 exports.survey_delete_by_id = asyncMiddleware(async (req, res, next) => {
 	const id = req.params.surveyId;
 	let surveyIsExist = await Survey.findById(id);

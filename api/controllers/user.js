@@ -5,6 +5,11 @@ const jwt = require('jsonwebtoken');
 const userHelper = require('../helpers/user.helper');
 const asyncMiddleware = require('../middleware/async-middleware');
 
+/**
+ * User Controllers
+ * 
+ */
+
 exports.user_create = asyncMiddleware(async (request, response, next) => {
     //Check user if username/email already used
     const usernameIsUsed = await userHelper.getUserByUsernameOrEmail(request.body.username);
